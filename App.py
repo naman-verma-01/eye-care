@@ -130,105 +130,108 @@ if value == "Main App":
     cap = cv2.VideoCapture(0)
 
     while start:
+        try:
 
-        _, frame = cap.read()
-#        img = requests.get(url)
-#        img_arr = np.array(bytearray(img.content), dtype=np.uint8)
-#        img = cv2.imdecode(img_arr, -1)
-        frame = imutils.resize(frame, width=1000, height=1800)
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        # detecting face in the image
-        cv2.putText(
-            frame, "Press 0 to capture at right distance", (30, 35),
-            fonts, 0.6, GREEN, 2)
-        if run:
-            ref_image = frame
-            ref_image_face_width = face_data(ref_image)
-            Focal_length_found = Focal_Length_Finder(Known_distance, Known_width, ref_image_face_width)
-            while True:
-                _, frame1 = cap.read()
-               # img = requests.get(url)
-               # img_arr = np.array(bytearray(img.content), dtype=np.uint8)
-               # img = cv2.imdecode(img_arr, -1)
-                frame1 = imutils.resize(frame1, width=1000, height=1800)
-                frame1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2RGB)
-                # detecting face in the image
-                face_width_in_frame = face_data(frame1)
+            _, frame = cap.read()
+    #        img = requests.get(url)
+    #        img_arr = np.array(bytearray(img.content), dtype=np.uint8)
+    #        img = cv2.imdecode(img_arr, -1)
+            frame = imutils.resize(frame, width=1000, height=1800)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # detecting face in the image
+            cv2.putText(
+                frame, "Press 0 to capture at right distance", (30, 35),
+                fonts, 0.6, GREEN, 2)
+            if run:
+                ref_image = frame
+                ref_image_face_width = face_data(ref_image)
+                Focal_length_found = Focal_Length_Finder(Known_distance, Known_width, ref_image_face_width)
+                while True:
+                    _, frame1 = cap.read()
+                   # img = requests.get(url)
+                   # img_arr = np.array(bytearray(img.content), dtype=np.uint8)
+                   # img = cv2.imdecode(img_arr, -1)
+                    frame1 = imutils.resize(frame1, width=1000, height=1800)
+                    frame1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2RGB)
+                    # detecting face in the image
+                    face_width_in_frame = face_data(frame1)
 
-                # check if the face is zero then not
-                # find the distance
-                if face_width_in_frame != 0:
-                    # finding the distance by calling function
-                    # Distance distnace finder function need
-                    # these arguments the Focal_Length,
-                    # Known_width(centimeters),
-                    # and Known_distance(centimeters)
-                    Distance = Distance_finder(
-                        Focal_length_found, Known_width, face_width_in_frame)
+                    # check if the face is zero then not
+                    # find the distance
+                    if face_width_in_frame != 0:
+                        # finding the distance by calling function
+                        # Distance distnace finder function need
+                        # these arguments the Focal_Length,
+                        # Known_width(centimeters),
+                        # and Known_distance(centimeters)
+                        Distance = Distance_finder(
+                            Focal_length_found, Known_width, face_width_in_frame)
 
-                    # draw line as background of text
-                    cv2.line(frame1, (30, 30), (230, 30), RED, 32)
-                    cv2.line(frame1, (30, 30), (230, 30), BLACK, 28)
+                        # draw line as background of text
+                        cv2.line(frame1, (30, 30), (230, 30), RED, 32)
+                        cv2.line(frame1, (30, 30), (230, 30), BLACK, 28)
 
-                    # Drawing Text on the screen
-                    cv2.putText(
-                        frame1, f"Distance: {round(Distance, 2)} CM", (30, 35),
-                        fonts, 0.6, GREEN, 2)
-                    if Distance < 40:
+                        # Drawing Text on the screen
                         cv2.putText(
-                            frame1, "Move back please", (300, 40),
-                            fonts, 2, (255, 0, 0), 2)
-                        state = "Near"
-                    elif Distance > 70:
-                        state = "Far"
-                    elif Distance < 70 and Distance > 40:
-                        state = "Correct"
-                    else:
-                        pass
-                  #  st.session_state.Distarray[j] = Distance
-                  # j += 1
-                    Frame_window.image(frame1)
-                time.sleep(1)
+                            frame1, f"Distance: {round(Distance, 2)} CM", (30, 35),
+                            fonts, 0.6, GREEN, 2)
+                        if Distance < 40:
+                            cv2.putText(
+                                frame1, "Move back please", (300, 40),
+                                fonts, 2, (255, 0, 0), 2)
+                            state = "Near"
+                        elif Distance > 70:
+                            state = "Far"
+                        elif Distance < 70 and Distance > 40:
+                            state = "Correct"
+                        else:
+                            pass
+                      #  st.session_state.Distarray[j] = Distance
+                      # j += 1
+                        Frame_window.image(frame1)
+                    time.sleep(1)
 
 
-                st.session_state.Sec += 1
+                    st.session_state.Sec += 1
 
-              #  print(Sec)
+                  #  print(Sec)
 
-                if state == "Near":
-                    st.session_state.NearSec += 1
-                elif state == "Far":
-                    st.session_state.FarSec += 1
+                    if state == "Near":
+                        st.session_state.NearSec += 1
+                    elif state == "Far":
+                        st.session_state.FarSec += 1
 
-                if state == "Correct":
-                    st.session_state.CorrectSec += 1
+                    if state == "Correct":
+                        st.session_state.CorrectSec += 1
 
-           # if check:
-           #    st.write("Correct => ", convert(CorrectSec))
-                #print("Correct => ", convert(CorrectSec))
-            #    st.write("Near => ", convert(NearSec))
-            #    st.write("Far =>  ", convert(FarSec))
-            #    st.write("Total => ", convert(Sec))
-            #if check:
-            ##    st.write("Correct Distance Maintained for %d : %d : %d" % (CorrectHr, CorrectMin, CorrectSec))
-             # #  print("Correct", CorrectHr, CorrectMin, CorrectSec)
-             #   st.write("Too Far Distance Maintained for %d : %d : %d" % (FarHr, FarMin, FarSec))
-              #  print("Far", FarHr, FarMin, FarSec)
-            #    st.write("Too Near Distance Maintained for %d : %d : %d" % (NearHr, NearMin, NearSec))
-              #  print("Near", NearHr, NearMin, NearSec)
-            #    st.write("Total Time measured %d : %d : %d" % (Hr, Min, Sec))
+               # if check:
+               #    st.write("Correct => ", convert(CorrectSec))
+                    #print("Correct => ", convert(CorrectSec))
+                #    st.write("Near => ", convert(NearSec))
+                #    st.write("Far =>  ", convert(FarSec))
+                #    st.write("Total => ", convert(Sec))
+                #if check:
+                ##    st.write("Correct Distance Maintained for %d : %d : %d" % (CorrectHr, CorrectMin, CorrectSec))
+                 # #  print("Correct", CorrectHr, CorrectMin, CorrectSec)
+                 #   st.write("Too Far Distance Maintained for %d : %d : %d" % (FarHr, FarMin, FarSec))
+                  #  print("Far", FarHr, FarMin, FarSec)
+                #    st.write("Too Near Distance Maintained for %d : %d : %d" % (NearHr, NearMin, NearSec))
+                  #  print("Near", NearHr, NearMin, NearSec)
+                #    st.write("Total Time measured %d : %d : %d" % (Hr, Min, Sec))
 
-        #if Check:
-        #    st.write("Correct Distance Maintained for %d : %d : %d" % (CorrectHr, CorrectMin, CorrectSec))
-        ##    st.write("Too Far Distance Maintained for %d : %d : %d" % (FarHr, FarMin, FarSec))
-         #   st.write("Too Near Distance Maintained for %d : %d : %d" % (NearHr, NearMin, NearSec))
-         #   st.write("Total Time measured %d : %d : %d" % (Hr, Min, Sec))
+            #if Check:
+            #    st.write("Correct Distance Maintained for %d : %d : %d" % (CorrectHr, CorrectMin, CorrectSec))
+            ##    st.write("Too Far Distance Maintained for %d : %d : %d" % (FarHr, FarMin, FarSec))
+             #   st.write("Too Near Distance Maintained for %d : %d : %d" % (NearHr, NearMin, NearSec))
+             #   st.write("Total Time measured %d : %d : %d" % (Hr, Min, Sec))
 
 
-        # looping through the facblanes detect in the image
-        # getting coordinates x, y , width and height
-        Frame_window.image(frame)
-        # reading reference_image from directory
+            # looping through the facblanes detect in the image
+            # getting coordinates x, y , width and height
+            Frame_window.image(frame)
+            # reading reference_image from directory
+        except:
+            pass
     data = [st.session_state.CorrectSec,st.session_state.NearSec,st.session_state.FarSec]
     Data = ["Correct","Near","Far"]
     if check:
