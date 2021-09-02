@@ -1,0 +1,5 @@
+time==1.0.0
+opencv-python==4.5.2.52
+streamlit==0.86.0
+imutils==0.5.4
+matplotlib==3.4.3
